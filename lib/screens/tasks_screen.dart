@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:todoey_flutter/widgets/tasks_list.dart';
 import 'package:todoey_flutter/screens/add_task_screen.dart';
+import 'package:todoey_flutter/models/task.dart';
+import 'package:todoey_flutter/widgets/tasks_list.dart';
 
-class TasksScreen extends StatelessWidget {
+class TasksScreen extends StatefulWidget {
+  @override
+  _TasksScreenState createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
+  List<Task> tasks = [
+    Task(title: 'Buy milk'),
+    Task(title: 'Buy bread'),
+    Task(title: 'Buy eggs'),
+  ];
+
+  void addTask(String newTask) {
+    tasks.add(Task(title: newTask));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,8 +28,16 @@ class TasksScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
+            elevation: 1.0,
             context: context,
-            builder: (context) => AddTaskScreen(),
+            builder: (context) => AddTaskScreen(
+              addTask: (newTaskTitle) {
+                setState(() {
+                  tasks.add(Task(title: newTaskTitle));
+                });
+                Navigator.pop(context);
+              },
+            ),
           );
         },
         backgroundColor: Colors.lightBlueAccent,
@@ -51,7 +76,7 @@ class TasksScreen extends StatelessWidget {
                       fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  '12 Tasks',
+                  '${tasks.length} Tasks',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18.0,
@@ -70,7 +95,7 @@ class TasksScreen extends StatelessWidget {
                   topLeft: Radius.circular(20.0),
                 ),
               ),
-              child: TasksList(),
+              child: TasksList(tasks: tasks),
             ),
           )
         ],
